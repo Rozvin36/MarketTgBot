@@ -14,3 +14,5 @@ DB_NAME = os.getenv("DB_NAME")
 DATABASE_URL = f"postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 TOKEN = os.getenv("TOKEN")
+
+REDIS_URL = os.getenv("REDIS_URL")

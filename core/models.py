@@ -1,20 +1,23 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import String, BigInteger, Integer, UUID, Enum, DateTime, func
-from sqlalchemy.orm import mapped_column, Mapped
+from sqlalchemy import String, BigInteger, Integer, UUID, Enum, DateTime, func, ForeignKey
+from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from core.database import Base
 from core.enums import Status
 
-
-class ProductORM(Base):
-    __tablename__ = 'product'
+class AbstractTableModel(Base):
+    __abstract__ = True
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         primary_key=True,
         default=uuid.uuid4)
+
+class ProductORM(AbstractTableModel):
+    __tablename__ = 'product'
+
 
     name: Mapped[str] = mapped_column(
         String(32 ),
@@ -38,14 +41,18 @@ class ProductORM(Base):
     )
 
 # id, user_id, product_id, amount, paid_a
-class PurchaseORM(Base):
+class PurchaseORM(AbstractTableModel):
     __tablename__ = 'purchase'
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
-        primary_key=True,
-        default=uuid.uuid4)
+
     user_id: Mapped[int] = mapped_column(BigInteger)
-    product_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True))
+    product_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("product.id"))
     amount: Mapped[int] = mapped_column(Integer)
     paid_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+    product = relationship("ProductORM", back_populates="purchases")
+
+    def __init__(self, **kwargs):
+        if "amount" not in kwargs and "product" in kwargs:
+            kwargs["amount"] = kwargs["product"].price
+        super().__init__(**kwargs)
