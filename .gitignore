@@ -28,6 +28,7 @@ build/
 *.db
 *.sqlite
 *.sqlite3
+seed.py
 
 # --- Логи ---
 *.log
