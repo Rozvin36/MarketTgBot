@@ -46,8 +46,6 @@ class PurchaseORM(AbstractTableModel):
 
 
     user_id: Mapped[int] = mapped_column(BigInteger)
-    product_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("product.id"))
+    product_id: Mapped[uuid.UUID] = mapped_column()
     amount: Mapped[int] = mapped_column(Integer)
     paid_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
-
-    product = relationship("ProductORM", back_populates="purchases")

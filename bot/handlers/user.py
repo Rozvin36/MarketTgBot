@@ -33,7 +33,7 @@ async def buy(message: Message):
 async def buy_one(callback: CallbackQuery):
     product_id = callback.data.split("_", 1)[1]
     user_id = callback.from_user.id
-    async with async_session as session:
+    async with async_session() as session:
         need_product = await session.get(ProductORM, product_id)
     if not need_product:
         await callback.answer("Товар не найден")

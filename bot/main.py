@@ -13,12 +13,13 @@ bot = Bot(
 )
 dp = Dispatcher()
 
-
-
 dp.include_router(user_router)
 dp.include_router(payment_router)
 
 async def main():
+    from core.database import async_engine, Base
+    async with async_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
     await dp.start_polling(bot)
 
 if __name__ == '__main__':
