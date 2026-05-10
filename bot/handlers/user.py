@@ -34,8 +34,11 @@ async def buy_one(callback: CallbackQuery):
     product_id = callback.data.split("_", 1)[1]
     user_id = callback.from_user.id
     async with async_session as session:
-        result = await session.get(ProductORM, product_id)
-        need_product = result.first()
+        need_product = await session.get(ProductORM, product_id)
+    if not need_product:
+        await callback.answer("Товар не найден")
+        return
+
     await callback.answer(f"Вы выбрали товар: {need_product.name}."
                           f"Описание: {need_product.description}."
                           f"Цена: {need_product.price} ⭐."
@@ -45,7 +48,7 @@ async def buy_one(callback: CallbackQuery):
         chat_id=user_id,
         title=need_product.name,
         description=need_product.description,
-        payload=need_product.id,
+        payload=str(need_product.id),
         provider_token="",
         currency="XTR",
         prices=[LabeledPrice(label=need_product.name, amount=need_product.price)]

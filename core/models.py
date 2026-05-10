@@ -51,8 +51,3 @@ class PurchaseORM(AbstractTableModel):
     paid_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
     product = relationship("ProductORM", back_populates="purchases")
-
-    def __init__(self, **kwargs):
-        if "amount" not in kwargs and "product" in kwargs:
-            kwargs["amount"] = kwargs["product"].price
-        super().__init__(**kwargs)

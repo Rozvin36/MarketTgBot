@@ -52,8 +52,12 @@ async def on_successful_payment(message: Message):
         purchase = PurchaseORM(
             user_id=user_id,
             product_id=payload,
+            amount=message.successful_payment.total_amount
         )
         session.add(purchase)
+        if product_name is None:
+            need_product = await session.get(ProductORM, payload)
+            product_name = need_product.name
         await session.commit()
 
     await message.answer(
